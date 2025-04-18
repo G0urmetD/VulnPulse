@@ -1,4 +1,5 @@
-![](vulnpulse.png)
+<img src="vulnpulse.png" alt="VulnPulse Logo" width="200" />
+
 # ELK-CVE-Fetcher
 Fetches CVE's &amp; parse it into Elasticsearch with the `HTTP Endpoint Logs (custom)` integration & Elastic Agent.
 
