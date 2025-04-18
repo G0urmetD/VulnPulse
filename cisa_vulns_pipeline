@@ -1,0 +1,72 @@
+PUT _ingest/pipeline/cisa_vulns_pipeline
+{
+  "description": "Map and parse every field from CISA Known Exploited Vulnerabilities",
+  "processors": [
+    /* CVE fields */
+    { "rename": { "field": "_ingest._value.cveID",                        "target_field": "cveID",                        "ignore_missing": true } },
+    { "rename": { "field": "_ingest._value.vendorProject",               "target_field": "vendorProject",               "ignore_missing": true } },
+    { "rename": { "field": "_ingest._value.product",                     "target_field": "product",                     "ignore_missing": true } },
+    { "rename": { "field": "_ingest._value.vulnerabilityName",           "target_field": "vulnerabilityName",           "ignore_missing": true } },
+    { "rename": { "field": "_ingest._value.shortDescription",            "target_field": "shortDescription",            "ignore_missing": true } },
+    { "rename": { "field": "_ingest._value.requiredAction",              "target_field": "requiredAction",              "ignore_missing": true } },
+    { "rename": { "field": "_ingest._value.knownRansomwareCampaignUse",  "target_field": "knownRansomwareCampaignUse",  "ignore_missing": true } },
+    { "rename": { "field": "_ingest._value.notes",                       "target_field": "notes",                       "ignore_missing": true } },
+    { "rename": { "field": "_ingest._value.cwes",                        "target_field": "cwes",                        "ignore_missing": true } },
+
+    /* Top-level metadata */
+    { "rename": { "field": "_ingest._value.dateReleased",                "target_field": "dateReleased",                "ignore_missing": true } },
+    { "rename": { "field": "_ingest._value.catalogVersion",              "target_field": "catalogVersion",              "ignore_missing": true } },
+    { "rename": { "field": "_ingest._value.title",                       "target_field": "title",                       "ignore_missing": true } },
+    { "rename": { "field": "_ingest._value.count",                       "target_field": "count",                       "ignore_missing": true } },
+
+    /* Date conversion */
+    {
+      "date": {
+        "field": "dateAdded",
+        "formats": ["yyyy-MM-dd"],
+        "target_field": "dateAdded",
+        "ignore_failure": true
+      }
+    },
+    {
+      "date": {
+        "field": "dueDate",
+        "formats": ["yyyy-MM-dd"],
+        "target_field": "dueDate",
+        "ignore_failure": true
+      }
+    },
+    {
+      "date": {
+        "field": "dateReleased",
+        "formats": ["strict_date_time"],
+        "target_field": "dateReleased",
+        "ignore_failure": true
+      }
+    },
+
+    /* Cleanup: remove the original _ingest._value object */
+    {
+      "remove": {
+        "field": "_ingest._value",
+        "ignore_missing": true
+      }
+    },
+
+    /* Optional: Add timestamp */
+    {
+      "set": {
+        "field": "event.ingested_at",
+        "value": "{{_ingest.timestamp}}"
+      }
+    }
+  ],
+  "on_failure": [
+    {
+      "set": {
+        "field": "pipelineError",
+        "value": "{{ _ingest.on_failure_message }}"
+      }
+    }
+  ]
+}
