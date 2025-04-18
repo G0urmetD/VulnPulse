@@ -11,11 +11,11 @@ Fetches CVE's &amp; parse it into Elasticsearch with the `HTTP Endpoint Logs (cu
   - HTTP Endpoint Logs (custom)
   - Settings:
     - Name: cisa-vulns-ingest
-    - Host: 0.0.0.0 (or localhost/127.0.0.1 would only listen on local)
+    - Host: localhost
     - Port: 8088
     - Pipeline: cisa_vulns_pipeline
 3. copy the python script to your linux server & create the cronjob
-  - set the environment variable `AGENT_ENDPOINT`, if not, second parameter is used `http://0.0.0.0:8088`
+  - set the environment variable `AGENT_ENDPOINT`, if not, second parameter is used `http://localhost:8088`
 
 ## Cronjob
 ```bash
